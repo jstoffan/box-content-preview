@@ -690,6 +690,7 @@ class DocBaseViewer extends BaseViewer {
             disableRange,
             disableStream,
             httpHeaders,
+            pdfBug: true,
             rangeChunkSize,
             url: appendQueryParams(pdfUrl, queryParams),
         });
@@ -1148,9 +1149,23 @@ class DocBaseViewer extends BaseViewer {
      * @param {Event} event - 'pagerendered' event
      * @return {void}
      */
-    pagerenderedHandler({ pageNumber }) {
+    pagerenderedHandler({ pageNumber, source }) {
         if (!pageNumber) {
             return;
+        }
+
+        window.stats = window.stats || {};
+        window.statsTotal = window.statsTotal || 0;
+
+        const current = window.stats[pageNumber];
+        const overall = source.stats.times[2].end - source.stats.times[2].start;
+
+        if (!current) {
+            window.stats[pageNumber] = overall;
+            window.statsCount = Object.keys(window.stats).length;
+            window.statsTotal += overall;
+
+            console.log(`Page ${pageNumber}: ${overall} -- Total: ${window.statsTotal} -- Count: ${window.statsCount}`);
         }
 
         // Page rendered event
