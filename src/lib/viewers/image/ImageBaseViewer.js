@@ -204,48 +204,22 @@ class ImageBaseViewer extends BaseViewer {
     }
 
     /**
-     * Sets the original image width and height on the img element. Can be removed when
-     * naturalHeight and naturalWidth attributes work correctly in IE 11.
+     * Sets the original image width and height on the img element.
      *
      * @protected
      * @param {HTMLElement} imageEl - The image to set the original size attributes on
      * @return {Promise} A promise that is resolved if the original image dimensions were set.
      */
     setOriginalImageSize(imageEl) {
-        const promise = new Promise(resolve => {
-            // Do not bother loading a new image when the natural size attributes exist
-            if (imageEl.naturalWidth && imageEl.naturalHeight) {
-                imageEl.setAttribute('originalWidth', imageEl.naturalWidth);
-                imageEl.setAttribute('originalHeight', imageEl.naturalHeight);
-                resolve();
-            } else {
-                // Case when natural dimensions are not assigned, such as with SVGs
-                // By default, assigned width and height in Chrome/Safari/Firefox will be 300x150.
-                // IE11 workaround. Dimensions only displayed if the image is attached to the document.
-                this.api
-                    .get(imageEl.src, { type: 'text' })
-                    .then(imageAsText => {
-                        try {
-                            const parser = new DOMParser();
-                            const svgEl = parser.parseFromString(imageAsText, 'image/svg+xml'); // Can throw in IE11
-                            const viewBox = svgEl.documentElement.getAttribute('viewBox');
-                            const [, , w, h] = viewBox.split(' ');
-                            const aspectRatio = h ? w / h : w;
-                            imageEl.setAttribute('originalWidth', Math.round(aspectRatio * 150));
-                            imageEl.setAttribute('originalHeight', 150);
-                        } catch (e) {
-                            // Assume 300x150 that chrome does by default
-                            imageEl.setAttribute('originalWidth', 300);
-                            imageEl.setAttribute('originalHeight', 150);
-                        } finally {
-                            resolve();
-                        }
-                    })
-                    .catch(resolve);
-            }
-        });
+        return new Promise(resolve => {
+            const { naturalHeight, naturalWidth } = imageEl;
+            const hasNaturalSize = naturalHeight && naturalWidth;
 
-        return promise;
+            imageEl.setAttribute('originalWidth', hasNaturalSize ? imageEl.naturalWidth : 300);
+            imageEl.setAttribute('originalHeight', hasNaturalSize ? imageEl.naturalHeight : 150);
+
+            resolve();
+        });
     }
 
     //--------------------------------------------------------------------------

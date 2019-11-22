@@ -222,54 +222,36 @@ describe('lib/viewers/image/ImageBaseViewer', () => {
     describe('setOriginalImageSize()', () => {
         it('should use the naturalHeight and naturalWidth when available', done => {
             const imageEl = {
-                naturalWidth: 100,
                 naturalHeight: 100,
+                naturalWidth: 100,
+                getAttribute: name => imageEl[name],
                 setAttribute: (name, value) => {
                     imageEl[name] = value;
                 },
-                getAttribute: name => imageEl[name],
             };
 
-            const promise = imageBase.setOriginalImageSize(imageEl);
-            promise
-                .then(() => {
-                    expect(imageEl.getAttribute('originalWidth')).to.equal(imageEl.naturalWidth);
-                    expect(imageEl.getAttribute('originalHeight')).to.equal(imageEl.naturalHeight);
-                    done();
-                })
-                .catch(() => {
-                    Assert.fail();
-                });
+            imageBase.setOriginalImageSize(imageEl).then(() => {
+                expect(imageEl.getAttribute('originalHeight')).to.equal(imageEl.naturalHeight);
+                expect(imageEl.getAttribute('originalWidth')).to.equal(imageEl.naturalWidth);
+                done();
+            });
         });
 
-        it('should default to 300x150 when naturalHeight and naturalWidth are 0x0', done => {
+        it('should default to 150x300 when naturalHeight and naturalWidth are 0x0', done => {
             const imageEl = {
-                naturalWidth: 0,
                 naturalHeight: 0,
+                naturalWidth: 0,
+                getAttribute: name => imageEl[name],
                 setAttribute: (name, value) => {
                     imageEl[name] = value;
                 },
-                getAttribute: name => imageEl[name],
             };
 
-            sandbox.stub(stubs.api, 'get').resolves('not real a image');
-            const promise = imageBase.setOriginalImageSize(imageEl);
-            promise
-                .then(() => {
-                    expect(imageEl.getAttribute('originalWidth')).to.equal(300);
-                    expect(imageEl.getAttribute('originalHeight')).to.equal(150);
-                    done();
-                })
-                .catch(() => {
-                    Assert.fail();
-                });
-        });
-
-        it('should resolve when the get call fails', done => {
-            const imageEl = {};
-            sandbox.stub(stubs.api, 'get').returns(Promise.reject());
-            const promise = imageBase.setOriginalImageSize(imageEl);
-            promise.then(() => Assert.fail()).catch(() => done());
+            imageBase.setOriginalImageSize(imageEl).then(() => {
+                expect(imageEl.getAttribute('originalHeight')).to.equal(150);
+                expect(imageEl.getAttribute('originalWidth')).to.equal(300);
+                done();
+            });
         });
     });
 
