@@ -1927,6 +1927,10 @@ class Preview extends EventEmitter {
             tokenOrTokenMap => tokenOrTokenMap[this.file.id],
         );
     };
+
+    setAnnotation = annotationId => {
+        this.viewer.emit('scrolltoannotation', annotationId);
+    };
 }
 
 global.Box = global.Box || {};
