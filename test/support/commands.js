@@ -1,11 +1,15 @@
 Cypress.Commands.add('getByTestId', (testId, options = {}) => cy.get(`[data-testid="${testId}"]`, options));
 Cypress.Commands.add('getByTitle', (title, options = {}) => cy.get(`[title="${title}"]`, options));
 Cypress.Commands.add('getPreviewPage', pageNum => {
-    cy.get(`.page[data-page-number=${pageNum}]`)
+    cy.getByTestId('bp')
+        .find('.page[data-page-number]')
+        .last()
+        .then($lastPage => {
+            const pageToUse = $lastPage.data('pageNumber') < pageNum ? 1 : pageNum;
+            return cy.get(`.page[data-page-number=${pageToUse}]`);
+        })
         .as('previewPage')
-        // Adding timeout here because sometimes it takes more than the Cypress
-        // default timeout to render the preview
-        .find('.loadingIcon', { timeout: 15000 })
+        .find('.loadingIcon', { timeout: 30000 })
         .should('not.exist');
 
     return cy.get('@previewPage');
@@ -26,7 +30,7 @@ Cypress.Commands.add('showPreview', (token, fileId, options) => {
     cy.wait('@getFileInfo');
 
     // Wait for .bp to load viewer
-    return cy.getByTestId('bp', { timeout: 15000 }).should('have.class', 'bp-loaded');
+    return cy.getByTestId('bp', { timeout: 60000 }).should('have.class', 'bp-loaded');
 });
 
 Cypress.Commands.add('showControls', () => {

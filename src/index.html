@@ -7,19 +7,28 @@
         <script src="./preview.js"></script>
 
         <style>
-            * {
-                box-sizing: border-box;
-                font-family: sans-serif;
-                margin: 0;
-                padding: 0;
+            html,
+            body {
+                height: 100%;
+            }
+
+            body {
+                display: flex;
+                flex-direction: column;
             }
 
             .setters-container {
                 display: flex;
                 font-size: 75%;
-                height: 10vh;
                 justify-content: space-around;
-                padding: 20px;
+                padding: 10px;
+            }
+
+            .setters-container * {
+                box-sizing: border-box;
+                font-family: sans-serif;
+                margin: 0;
+                padding: 0;
             }
 
             .setters-container button,
@@ -36,7 +45,7 @@
             }
 
             .preview-container {
-                height: 90vh;
+                flex: 1 1 100%;
                 width: 100vw;
             }
         </style>
@@ -93,12 +102,26 @@
                 }
 
                 var previewOptions = options || {
-                    enableThumbnailsSidebar: true,
-                    showAnnotations: true,
+                    enableThumbnailsSidebar: false,
                     showDownload: true,
                 };
                 previewOptions.container = '.preview-container';
 
+                preview.addListener('preview_metric', metric => {
+                    if (metric.event_name === 'load') {
+                        var interval = window.setInterval(() => {
+                            if (window.ux_stats) {
+                                window.clearInterval(interval);
+                                window.stats = {
+                                    ...window.pdf_stats,
+                                    ...window.preview_stats,
+                                    ...window.ux_stats,
+                                };
+                                console.table(window.stats);
+                            }
+                        }, 250);
+                    }
+                });
                 preview.show(fileid, token, previewOptions);
             }
 

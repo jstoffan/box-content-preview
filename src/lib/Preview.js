@@ -778,6 +778,7 @@ class Preview extends EventEmitter {
         // Start the preview load and render timers when the user starts to perceive preview's load
         Timer.start(Timer.createTag(this.file.id, LOAD_METRIC.previewLoadTime));
         Timer.start(Timer.createTag(this.file.id, RENDER_METRIC));
+        Timer.start(Timer.createTag(this.file.id, 'pdf_load'));
 
         // If file version ID is specified, increment retry count if it matches current file version ID
         if (fileVersionId) {
@@ -1584,6 +1585,13 @@ class Preview extends EventEmitter {
         const downloadTime = Timer.get(downloadTag) || {};
         const contentLoadTime = Timer.get(contentLoadTag) || {};
         const previewLoadTime = Timer.get(previewLoadTag) || {};
+
+        window.preview_stats = window.preview_stats || {};
+        window.preview_stats = {
+            preview_files_load: infoTime.elapsed || 0,
+            preview_content_load: contentLoadTime.elapsed || 0,
+            preview_request_load: previewLoadTime.elapsed || 0,
+        };
 
         this.emitLogEvent(PREVIEW_METRIC, {
             encoding,

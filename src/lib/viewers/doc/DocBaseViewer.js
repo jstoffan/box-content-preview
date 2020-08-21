@@ -683,6 +683,9 @@ class DocBaseViewer extends BaseViewer {
             queryParams[QUERY_PARAM_ENCODING] = this.encoding;
         }
 
+        console.log(`Range ${disableRange ? 'disabled' : 'enabled'}`);
+        console.log(`Stream ${disableStream ? 'disabled' : 'enabled'}`);
+
         // Load PDF from representation URL and set as document for pdf.js. Cache task for destruction
         this.pdfLoadingTask = this.pdfjsLib.getDocument({
             cMapPacked: true,
@@ -691,6 +694,7 @@ class DocBaseViewer extends BaseViewer {
             disableFontFace,
             disableRange,
             disableStream,
+            pdfBug: true,
             rangeChunkSize,
             url: appendQueryParams(pdfUrl, queryParams),
         });
@@ -1174,6 +1178,16 @@ class DocBaseViewer extends BaseViewer {
         this.setPage(pageNum);
     }
 
+    getStatTime(stats, statName) {
+        const { end, start } = stats.times.find(st => st.name === statName);
+        return end - start;
+    }
+
+    setStat(key, value) {
+        window.pdf_stats = window.pdf_stats || {};
+        window.pdf_stats[key] = window.pdf_stats[key] || value;
+    }
+
     /**
      * Handler for 'pagerendered' event.
      *
@@ -1184,6 +1198,24 @@ class DocBaseViewer extends BaseViewer {
     pagerenderedHandler({ pageNumber }) {
         if (!pageNumber) {
             return;
+        }
+
+        const startPage = this.startPageNum || this.getCachedPage() || 1;
+        const startStats = this.pdfViewer.getPageView(startPage - 1).stats;
+
+        if (startPage === pageNumber) {
+            if (startStats) {
+                this.setStat('pdf_start_page_num', startPage);
+                this.setStat('pdf_start_page_request', this.getStatTime(startStats, 'Page Request'));
+                this.setStat('pdf_start_page_render', this.getStatTime(startStats, 'Rendering'));
+                this.setStat('pdf_start_page_overall', this.getStatTime(startStats, 'Overall'));
+            }
+
+            const pdfLoadTimer = Timer.stop(Timer.createTag(this.options.file.id, 'pdf_load')) || {};
+            const pdfLoadTime = pdfLoadTimer.elapsed || 0;
+
+            window.ux_stats = window.ux_stats || {};
+            window.ux_stats.ux_start_page_load = pdfLoadTime;
         }
 
         this.zoomControls.setCurrentScale(this.pdfViewer.currentScale);
