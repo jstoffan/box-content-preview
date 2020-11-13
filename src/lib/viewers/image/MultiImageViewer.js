@@ -23,10 +23,10 @@ class MultiImageViewer extends ImageBaseViewer {
         this.setPage = this.setPage.bind(this);
         this.scrollHandler = this.scrollHandler.bind(this);
         this.handlePageChangeFromScroll = this.handlePageChangeFromScroll.bind(this);
+        this.handlePageSubmit = this.handlePageSubmit.bind(this);
         this.handleMultiImageDownloadError = this.handleMultiImageDownloadError.bind(this);
         this.handleAssetAndRepLoad = this.handleAssetAndRepLoad.bind(this);
         this.finishLoading = this.finishLoading.bind(this);
-        this.onInputKeyboardEscape = this.onInputKeyboardEscape.bind(this);
         this.updatePannability = this.updatePannability.bind(this);
     }
 
@@ -270,15 +270,6 @@ class MultiImageViewer extends ImageBaseViewer {
         this.renderUI();
     }
 
-    /**
-     * Callback invoked when the input is escaped via keyboard
-     *
-     * @return {void}
-     */
-    onInputKeyboardEscape() {
-        this.wrapperEl.focus();
-    }
-
     renderUI() {
         if (this.zoomControls) {
             this.zoomControls.setCurrentScale(this.scale);
@@ -292,8 +283,8 @@ class MultiImageViewer extends ImageBaseViewer {
             this.controls.render(
                 <MultiImageControls
                     onFullscreenToggle={this.toggleFullscreen}
-                    onInputKeyboardEscape={this.onInputKeyboardEscape}
                     onPageChange={this.setPage}
+                    onPageSubmit={this.handlePageSubmit}
                     onZoomIn={this.zoomIn}
                     onZoomOut={this.zoomOut}
                     pageCount={this.pagesCount}
@@ -468,6 +459,11 @@ class MultiImageViewer extends ImageBaseViewer {
 
         this.scrollCheckHandler = null;
         this.previousScrollTop = this.wrapperEl.scrollTop;
+    }
+
+    handlePageSubmit(page) {
+        this.setPage(page);
+        this.wrapperEl.focus();
     }
 }
 

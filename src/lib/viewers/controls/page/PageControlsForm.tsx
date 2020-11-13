@@ -3,75 +3,55 @@ import { decodeKeydown } from '../../../util';
 import './PageControlsForm.scss';
 
 export type Props = {
-    onPageChange: (newPageNumber: number) => void;
-    pageNumber: number;
-    pageCount: number;
+    onPageSubmit: (page: number) => void;
+    pageCount?: number;
+    pageNumber?: number;
 };
 
-const EMPTY = 'Empty';
-const ENTER = 'Enter';
-const TAB = 'Tab';
-const ESCAPE = 'Escape';
-
-export function PageControlsForm(
-    { onPageChange, pageNumber, pageCount }: Props,
-    nextPageButtonRef?: React.Ref<HTMLButtonElement>,
-): JSX.Element {
+export default function PageControlsForm({ onPageSubmit, pageNumber = 1, pageCount = 1 }: Props): JSX.Element {
+    const [inputValue, setInputValue] = React.useState(pageNumber);
     const [isInputShown, setIsInputShown] = React.useState(false);
-    const [pageInputValue, setPageInputValue] = React.useState(pageNumber.toString());
-    const lastNumInputKeyDown = React.useRef<typeof EMPTY | typeof ENTER | typeof TAB | typeof ESCAPE>(EMPTY);
-    const numPageButtonRef = React.useRef<HTMLButtonElement>(null);
-    const inputRef = React.useRef<HTMLInputElement>(null);
+    const buttonElRef = React.useRef<HTMLButtonElement>(null);
+    const inputElRef = React.useRef<HTMLInputElement>(null);
+    const isRetryRef = React.useRef(false);
 
-    const setLastNumInputKeyDown = (action: typeof EMPTY | typeof ENTER | typeof TAB | typeof ESCAPE): void => {
-        lastNumInputKeyDown.current = action;
-    };
-
-    const setPage = (): void => {
-        const newPageNumber = parseInt(pageInputValue, 10);
-
-        if (!Number.isNaN(newPageNumber)) {
-            onPageChange(newPageNumber);
+    const setPage = (allowRetry = false): void => {
+        if (!Number.isNaN(inputValue) && inputValue >= 1 && inputValue <= pageCount && inputValue !== pageNumber) {
+            onPageSubmit(inputValue);
+        } else {
+            isRetryRef.current = allowRetry; // Move the focus to the button to allow immediate retry
+            setInputValue(pageNumber); // Reset the invalid input value to the current page
         }
+
+        setIsInputShown(false);
     };
 
     const handleNumInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setPageInputValue(event.target.value);
+        setInputValue(parseInt(event.target.value, 10));
     };
 
     const handleNumInputBlur = (): void => {
         setPage();
-        setLastNumInputKeyDown(EMPTY);
-        setIsInputShown(false);
     };
 
     const handleNumInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>): void => {
         const key = decodeKeydown(event);
 
         switch (key) {
-            case ENTER:
-                setPage();
-                setLastNumInputKeyDown(ENTER);
-                setIsInputShown(false);
-
+            case 'Enter':
                 event.stopPropagation();
                 event.preventDefault();
-                break;
-            case TAB:
-                setPage();
-                setLastNumInputKeyDown(TAB);
-                setIsInputShown(false);
 
-                event.stopPropagation();
-                event.preventDefault();
+                setPage(true);
                 break;
 
-            case ESCAPE:
-                setLastNumInputKeyDown(ESCAPE);
-                setIsInputShown(false);
-
+            case 'Escape':
                 event.stopPropagation();
                 event.preventDefault();
+
+                isRetryRef.current = true;
+                setInputValue(pageNumber); // Abort the input
+                setIsInputShown(false);
                 break;
             default:
                 break;
@@ -79,37 +59,27 @@ export function PageControlsForm(
     };
 
     React.useEffect(() => {
-        if (inputRef.current && isInputShown) {
-            setPageInputValue(pageNumber.toString());
-            inputRef.current.select();
+        setInputValue(pageNumber); // Keep internal state in sync with prop as it changes
+    }, [pageNumber]);
+
+    React.useLayoutEffect(() => {
+        const { current: isRetry } = isRetryRef;
+
+        if (inputElRef.current && isInputShown) {
+            inputElRef.current.select();
         }
 
-        if (numPageButtonRef.current && !isInputShown) {
-            switch (lastNumInputKeyDown.current) {
-                case TAB:
-                    if (nextPageButtonRef && nextPageButtonRef.current) {
-                        nextPageButtonRef.current.focus();
-                        setLastNumInputKeyDown(EMPTY);
-                    }
-                    break;
-                case ENTER:
-                case ESCAPE:
-                    if (numPageButtonRef && numPageButtonRef.current) {
-                        numPageButtonRef.current.focus();
-                        setLastNumInputKeyDown(EMPTY);
-                    }
-                    break;
-                default:
-                    break;
-            }
+        if (buttonElRef.current && !isInputShown && isRetry) {
+            isRetryRef.current = false;
+            buttonElRef.current.focus();
         }
-    }, [isInputShown, nextPageButtonRef, pageNumber]);
+    }, [isInputShown]);
 
     return (
         <div className="bp-PageControlsForm">
             {isInputShown ? (
                 <input
-                    ref={inputRef}
+                    ref={inputElRef}
                     className="bp-PageControlsForm-input"
                     data-testid="bp-PageControlsForm-input"
                     disabled={pageCount <= 1}
@@ -121,11 +91,11 @@ export function PageControlsForm(
                     size={3}
                     title={__('enter_page_num')}
                     type="number"
-                    value={pageInputValue}
+                    value={inputValue.toString()}
                 />
             ) : (
                 <button
-                    ref={numPageButtonRef}
+                    ref={buttonElRef}
                     className="bp-PageControlsForm-button"
                     data-testid="bp-PageControlsForm-button"
                     onClick={(): void => setIsInputShown(true)}
@@ -141,5 +111,3 @@ export function PageControlsForm(
         </div>
     );
 }
-
-export default React.forwardRef<HTMLButtonElement, Props>(PageControlsForm);

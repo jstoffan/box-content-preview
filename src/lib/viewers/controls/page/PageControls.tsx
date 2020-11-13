@@ -5,14 +5,18 @@ import PageControlsForm from './PageControlsForm';
 import './PageControls.scss';
 
 export type Props = {
-    onPageChange: (newPageNumber: number) => void;
-    pageCount: number;
-    pageNumber: number;
+    onPageChange: (page: number) => void;
+    onPageSubmit: () => void;
+    pageCount?: number;
+    pageNumber?: number;
 };
 
-export default function PageControls({ onPageChange, pageCount, pageNumber }: Props): JSX.Element {
-    const nextPageButtonRef = React.useRef<HTMLButtonElement | null>(null);
-
+export default function PageControls({
+    onPageChange,
+    onPageSubmit,
+    pageCount = 1,
+    pageNumber = 1,
+}: Props): JSX.Element {
     return (
         <div className="bp-PageControls">
             <button
@@ -25,14 +29,8 @@ export default function PageControls({ onPageChange, pageCount, pageNumber }: Pr
             >
                 <IconArrowUp24 />
             </button>
-            <PageControlsForm
-                ref={nextPageButtonRef}
-                onPageChange={onPageChange}
-                pageCount={pageCount}
-                pageNumber={pageNumber}
-            />
+            <PageControlsForm onPageSubmit={onPageSubmit} pageCount={pageCount} pageNumber={pageNumber} />
             <button
-                ref={nextPageButtonRef}
                 className="bp-PageControls-button"
                 data-testid="bp-PageControls-next"
                 disabled={pageNumber === pageCount}

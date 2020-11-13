@@ -9,6 +9,7 @@ export type Props = FullscreenToggleProps & PageControlsProps & ZoomControlsProp
 export default function MultiImageControls({
     onFullscreenToggle,
     onPageChange,
+    onPageSubmit,
     onZoomIn,
     onZoomOut,
     pageCount,
@@ -18,7 +19,12 @@ export default function MultiImageControls({
     return (
         <ControlsBar>
             <ZoomControls onZoomIn={onZoomIn} onZoomOut={onZoomOut} scale={scale} />
-            <PageControls onPageChange={onPageChange} pageCount={pageCount} pageNumber={pageNumber} />
+            <PageControls
+                onPageChange={onPageChange}
+                onPageSubmit={onPageSubmit}
+                pageCount={pageCount}
+                pageNumber={pageNumber}
+            />
             <FullscreenToggle onFullscreenToggle={onFullscreenToggle} />
         </ControlsBar>
     );
