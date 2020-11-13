@@ -15,7 +15,6 @@ describe('MultiImageControls', () => {
             const onToggle = jest.fn();
             const onZoomIn = jest.fn();
             const onZoomOut = jest.fn();
-            const viewer = document.createElement('div');
             const wrapper = shallow(
                 <MultiImageControls
                     onFullscreenToggle={onToggle}
@@ -24,7 +23,6 @@ describe('MultiImageControls', () => {
                     onZoomOut={onZoomOut}
                     pageCount={pageCount}
                     pageNumber={pageNumber}
-                    viewer={viewer}
                 />,
             );
 
@@ -35,7 +33,6 @@ describe('MultiImageControls', () => {
             expect(wrapper.find(ZoomControls).prop('onZoomOut')).toEqual(onZoomOut);
             expect(wrapper.find(PageControls).prop('pageCount')).toEqual(pageCount);
             expect(wrapper.find(PageControls).prop('pageNumber')).toEqual(pageNumber);
-            expect(wrapper.find(PageControls).prop('viewer')).toEqual(viewer);
         });
     });
 });

@@ -7,7 +7,6 @@ import ZoomControls, { Props as ZoomControlsProps } from '../controls/zoom';
 export type Props = FullscreenToggleProps & PageControlsProps & ZoomControlsProps;
 
 export default function MultiImageControls({
-    getViewer,
     onFullscreenToggle,
     onPageChange,
     onZoomIn,
@@ -19,12 +18,7 @@ export default function MultiImageControls({
     return (
         <ControlsBar>
             <ZoomControls onZoomIn={onZoomIn} onZoomOut={onZoomOut} scale={scale} />
-            <PageControls
-                getViewer={getViewer}
-                onPageChange={onPageChange}
-                pageCount={pageCount}
-                pageNumber={pageNumber}
-            />
+            <PageControls onPageChange={onPageChange} pageCount={pageCount} pageNumber={pageNumber} />
             <FullscreenToggle onFullscreenToggle={onFullscreenToggle} />
         </ControlsBar>
     );

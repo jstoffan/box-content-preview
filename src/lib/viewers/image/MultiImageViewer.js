@@ -20,13 +20,13 @@ class MultiImageViewer extends ImageBaseViewer {
     constructor(options) {
         super(options);
 
-        this.getViewer = this.getViewer.bind(this);
         this.setPage = this.setPage.bind(this);
         this.scrollHandler = this.scrollHandler.bind(this);
         this.handlePageChangeFromScroll = this.handlePageChangeFromScroll.bind(this);
         this.handleMultiImageDownloadError = this.handleMultiImageDownloadError.bind(this);
         this.handleAssetAndRepLoad = this.handleAssetAndRepLoad.bind(this);
         this.finishLoading = this.finishLoading.bind(this);
+        this.onInputKeyboardEscape = this.onInputKeyboardEscape.bind(this);
         this.updatePannability = this.updatePannability.bind(this);
     }
 
@@ -104,15 +104,6 @@ class MultiImageViewer extends ImageBaseViewer {
     finishLoading() {
         super.finishLoading();
         this.setOriginalImageSizes();
-    }
-
-    /**
-     * Retrieves wrapper element
-     *
-     * @return HTMLElement
-     */
-    getViewer() {
-        return this.wrapperEl;
     }
 
     /**
@@ -279,6 +270,15 @@ class MultiImageViewer extends ImageBaseViewer {
         this.renderUI();
     }
 
+    /**
+     * Callback invoked when the input is escaped via keyboard
+     *
+     * @return {void}
+     */
+    onInputKeyboardEscape() {
+        this.wrapperEl.focus();
+    }
+
     renderUI() {
         if (this.zoomControls) {
             this.zoomControls.setCurrentScale(this.scale);
@@ -291,8 +291,8 @@ class MultiImageViewer extends ImageBaseViewer {
         if (this.controls && this.options.useReactControls) {
             this.controls.render(
                 <MultiImageControls
-                    getViewer={this.getViewer}
                     onFullscreenToggle={this.toggleFullscreen}
+                    onInputKeyboardEscape={this.onInputKeyboardEscape}
                     onPageChange={this.setPage}
                     onZoomIn={this.zoomIn}
                     onZoomOut={this.zoomOut}

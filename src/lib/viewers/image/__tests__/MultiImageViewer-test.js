@@ -170,14 +170,6 @@ describe('lib/viewers/image/MultiImageViewer', () => {
         });
     });
 
-    describe('getViewer()', () => {
-        test('should return viewer', () => {
-            const viewer = multiImage.getViewer();
-
-            expect(viewer).toBe(multiImage.wrapperEl);
-        });
-    });
-
     describe('constructImageUrls()', () => {
         test('should remove both the new and old form of asset path', () => {
             const firstURL = 'file/100/content/1.png';
@@ -389,6 +381,16 @@ describe('lib/viewers/image/MultiImageViewer', () => {
         });
     });
 
+    describe('onInputKeyboardEscape()', () => {
+        test('should focus viewer', () => {
+            jest.spyOn(multiImage.wrapperEl, 'focus');
+
+            multiImage.onInputKeyboardEscape();
+
+            expect(multiImage.wrapperEl.focus).toHaveBeenCalled();
+        });
+    });
+
     describe('loadUIReact()', () => {
         test('should create controls root and render the react controls', () => {
             multiImage.options.useReactControls = true;
@@ -397,8 +399,8 @@ describe('lib/viewers/image/MultiImageViewer', () => {
             expect(multiImage.controls).toBeInstanceOf(ControlsRoot);
             expect(multiImage.controls.render).toBeCalledWith(
                 <MultiImageControls
-                    getViewer={multiImage.getViewer}
                     onFullscreenToggle={multiImage.toggleFullscreen}
+                    onInputKeyboardEscape={multiImage.onInputKeyboardEscape}
                     onPageChange={multiImage.setPage}
                     onZoomIn={multiImage.zoomIn}
                     onZoomOut={multiImage.zoomOut}

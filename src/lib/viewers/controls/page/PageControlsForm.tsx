@@ -1,67 +1,74 @@
 import React from 'react';
-import Browser from '../../../Browser';
-import { BROWSERS } from '../../../constants';
 import { decodeKeydown } from '../../../util';
 import './PageControlsForm.scss';
 
 export type Props = {
-    getViewer: () => HTMLElement;
     onPageChange: (newPageNumber: number) => void;
     pageNumber: number;
     pageCount: number;
 };
 
-export default function PageControlsForm({ getViewer, onPageChange, pageNumber, pageCount }: Props): JSX.Element {
+const EMPTY = 'Empty';
+const ENTER = 'Enter';
+const TAB = 'Tab';
+const ESCAPE = 'Escape';
+
+export function PageControlsForm(
+    { onPageChange, pageNumber, pageCount }: Props,
+    nextPageButtonRef?: React.Ref<HTMLButtonElement>,
+): JSX.Element {
     const [isInputShown, setIsInputShown] = React.useState(false);
     const [pageInputValue, setPageInputValue] = React.useState(pageNumber.toString());
-    const inputElRef = React.useRef<HTMLInputElement>(null);
-    const viewer = getViewer();
+    const lastNumInputKeyDown = React.useRef<typeof EMPTY | typeof ENTER | typeof TAB | typeof ESCAPE>(EMPTY);
+    const numPageButtonRef = React.useRef<HTMLButtonElement>(null);
+    const inputRef = React.useRef<HTMLInputElement>(null);
 
-    React.useEffect(() => {
-        if (inputElRef && inputElRef.current) {
-            setPageInputValue(pageNumber.toString());
-            inputElRef.current.focus();
+    const setLastNumInputKeyDown = (action: typeof EMPTY | typeof ENTER | typeof TAB | typeof ESCAPE): void => {
+        lastNumInputKeyDown.current = action;
+    };
+
+    const setPage = (): void => {
+        const newPageNumber = parseInt(pageInputValue, 10);
+
+        if (!Number.isNaN(newPageNumber)) {
+            onPageChange(newPageNumber);
         }
-    }, [isInputShown, pageNumber]);
+    };
 
     const handleNumInputChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         setPageInputValue(event.target.value);
     };
 
     const handleNumInputBlur = (): void => {
-        const newPageNumber = parseInt(pageInputValue, 10);
-
-        if (!Number.isNaN(newPageNumber)) {
-            onPageChange(newPageNumber);
-        }
-
+        setPage();
+        setLastNumInputKeyDown(EMPTY);
         setIsInputShown(false);
     };
 
     const handleNumInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>): void => {
-        const key = decodeKeydown((event as unknown) as Event);
+        const key = decodeKeydown(event);
 
         switch (key) {
-            case 'Enter':
-            case 'Tab':
-                viewer.focus();
-                // The keycode of the 'next' key on Android Chrome is 9, which maps to 'Tab'.
-                // We normally trigger the blur handler by blurring the input
-                // field, but this doesn't work for IE in fullscreen. For IE,
-                // we blur the page behind the controls - this unfortunately
-                // is an IE-only solution that doesn't work with other browsers
+            case ENTER:
+                setPage();
+                setLastNumInputKeyDown(ENTER);
+                setIsInputShown(false);
 
-                if (Browser.getName() !== BROWSERS.INTERNET_EXPLORER) {
-                    (event.target as HTMLInputElement).blur();
-                }
+                event.stopPropagation();
+                event.preventDefault();
+                break;
+            case TAB:
+                setPage();
+                setLastNumInputKeyDown(TAB);
+                setIsInputShown(false);
 
                 event.stopPropagation();
                 event.preventDefault();
                 break;
 
-            case 'Escape':
+            case ESCAPE:
+                setLastNumInputKeyDown(ESCAPE);
                 setIsInputShown(false);
-                viewer.focus();
 
                 event.stopPropagation();
                 event.preventDefault();
@@ -71,11 +78,38 @@ export default function PageControlsForm({ getViewer, onPageChange, pageNumber, 
         }
     };
 
+    React.useEffect(() => {
+        if (inputRef.current && isInputShown) {
+            setPageInputValue(pageNumber.toString());
+            inputRef.current.select();
+        }
+
+        if (numPageButtonRef.current && !isInputShown) {
+            switch (lastNumInputKeyDown.current) {
+                case TAB:
+                    if (nextPageButtonRef && nextPageButtonRef.current) {
+                        nextPageButtonRef.current.focus();
+                        setLastNumInputKeyDown(EMPTY);
+                    }
+                    break;
+                case ENTER:
+                case ESCAPE:
+                    if (numPageButtonRef && numPageButtonRef.current) {
+                        numPageButtonRef.current.focus();
+                        setLastNumInputKeyDown(EMPTY);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }, [isInputShown, nextPageButtonRef, pageNumber]);
+
     return (
         <div className="bp-PageControlsForm">
             {isInputShown ? (
                 <input
-                    ref={inputElRef}
+                    ref={inputRef}
                     className="bp-PageControlsForm-input"
                     data-testid="bp-PageControlsForm-input"
                     disabled={pageCount <= 1}
@@ -91,6 +125,7 @@ export default function PageControlsForm({ getViewer, onPageChange, pageNumber, 
                 />
             ) : (
                 <button
+                    ref={numPageButtonRef}
                     className="bp-PageControlsForm-button"
                     data-testid="bp-PageControlsForm-button"
                     onClick={(): void => setIsInputShown(true)}
@@ -106,3 +141,5 @@ export default function PageControlsForm({ getViewer, onPageChange, pageNumber, 
         </div>
     );
 }
+
+export default React.forwardRef<HTMLButtonElement, Props>(PageControlsForm);
