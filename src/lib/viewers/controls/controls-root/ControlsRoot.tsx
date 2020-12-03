@@ -40,13 +40,13 @@ export default class ControlsRoot {
 
     handleMouseMove = throttle((): void => {
         this.controlsLayer.show();
-        this.controlsLayer.hide(); // Hide after delay unless movement is continuous
+        // this.controlsLayer.hide(); // Hide after delay unless movement is continuous
     }, 100);
 
     handleTouchStart = throttle((): void => {
-        this.controlsLayer.reset(); // Ignore focus/hover state for touch events
+        // this.controlsLayer.reset(); // Ignore focus/hover state for touch events
         this.controlsLayer.show();
-        this.controlsLayer.hide(); // Hide after delay unless movement is continuous
+        // this.controlsLayer.hide(); // Hide after delay unless movement is continuous
     }, 100);
 
     destroy(): void {

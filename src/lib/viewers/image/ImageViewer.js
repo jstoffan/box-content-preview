@@ -408,7 +408,7 @@ class ImageViewer extends ImageBaseViewer {
             this.controls.render(
                 <ImageControls
                     annotationMode={this.annotationControlsFSM.getMode()}
-                    hasDrawing={canDraw}
+                    hasDrawing
                     hasHighlight={false}
                     hasRegion={canAnnotate}
                     onAnnotationModeClick={this.handleAnnotationControlsClick}

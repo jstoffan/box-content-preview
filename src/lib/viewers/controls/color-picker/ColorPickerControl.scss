@@ -13,10 +13,34 @@ $color-picker-control-height: 48px;
 
 .bp-ColorPickerControl-button {
     @include bp-ControlButton;
+}
 
-    svg {
-        background-color: $box-blue;
-        border: 2px solid #fff;
-        border-radius: 2px;
+.bp-ColorPickerControl-swatch {
+    width: 18px;
+    height: 18px;
+    background-color: $box-blue;
+    border: 2px solid #fff;
+    border-radius: 2px;
+}
+
+.bp-ColorPickerControl-palette {
+    $arrow-height: 12px;
+
+    position: absolute;
+    top: -#{$arrow-height};
+    left: 50%;
+    z-index: 1;
+    padding-bottom: 4px;
+    transform: translate(-50%, -100%);
+
+    &::after {
+        position: absolute;
+        left: 50%;
+        display: block;
+        border-top: $arrow-height solid rgba(0, 0, 0, .8);
+        border-right: $arrow-height solid transparent;
+        border-left: $arrow-height solid transparent;
+        transform: translateX(-50%);
+        content: '';
     }
 }

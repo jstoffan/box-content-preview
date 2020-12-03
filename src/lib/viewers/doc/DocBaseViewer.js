@@ -1090,7 +1090,7 @@ class DocBaseViewer extends BaseViewer {
             this.controls.render(
                 <DocControls
                     annotationMode={this.annotationControlsFSM.getMode()}
-                    hasDrawing={canDraw}
+                    hasDrawing
                     hasHighlight={canHighlight}
                     hasRegion={canAnnotate}
                     maxScale={MAX_SCALE}
