@@ -565,7 +565,7 @@ class DashViewer extends VideoBaseViewer {
     loadSubtitles() {
         // Load subtitles from video, if available
         this.textTracks = this.player.getTextTracks().sort((track1, track2) => track1.id - track2.id);
-        if (this.textTracks.length > 0) {
+        if (this.mediaControls && this.textTracks.length > 0) {
             this.mediaControls.initSubtitles(
                 this.textTracks.map(track => getLanguageName(track.language) || track.language),
                 getLanguageName(this.options.location.locale.substring(0, 2)),
@@ -603,12 +603,15 @@ class DashViewer extends VideoBaseViewer {
             this.autoCaptionDisplayer.setTextVisibility(areAutoCaptionsVisible);
         } else {
             this.setupAutoCaptionDisplayer(textCues);
-            // Update the subtitles/caption button to reflect auto-translation
-            this.mediaControls.setLabel(this.mediaControls.subtitlesButtonEl, __('media_auto_generated_captions'));
-            this.mediaControls.initSubtitles(
-                [__('auto_generated')],
-                getLanguageName(this.options.location.locale.substring(0, 2)),
-            );
+
+            if (this.mediaControls) {
+                // Update the subtitles/caption button to reflect auto-translation
+                this.mediaControls.setLabel(this.mediaControls.subtitlesButtonEl, __('media_auto_generated_captions'));
+                this.mediaControls.initSubtitles(
+                    [__('auto_generated')],
+                    getLanguageName(this.options.location.locale.substring(0, 2)),
+                );
+            }
         }
     }
 
@@ -668,7 +671,10 @@ class DashViewer extends VideoBaseViewer {
         if (this.audioTracks.length > 1) {
             // translate the language first
             const languages = this.audioTracks.map(track => getLanguageName(track.language) || track.language);
-            this.mediaControls.initAlternateAudio(languages);
+
+            if (this.mediaControls) {
+                this.mediaControls.initAlternateAudio(languages);
+            }
         }
     }
 
@@ -685,7 +691,12 @@ class DashViewer extends VideoBaseViewer {
         }
 
         this.calculateVideoDimensions();
-        this.loadUI();
+
+        if (this.getViewerOption('useReactControls')) {
+            this.loadUIReact();
+        } else {
+            this.loadUI();
+        }
 
         if (this.isAutoplayEnabled()) {
             this.autoplay();
@@ -704,10 +715,13 @@ class DashViewer extends VideoBaseViewer {
 
         // Make media element visible after resize
         this.showMedia();
-        this.mediaControls.show();
 
-        if (this.options.autoFocus) {
-            this.mediaContainerEl.focus();
+        if (this.mediaControls) {
+            this.mediaControls.show();
+
+            if (this.options.autoFocus) {
+                this.mediaContainerEl.focus();
+            }
         }
     }
 
@@ -733,7 +747,10 @@ class DashViewer extends VideoBaseViewer {
         if (filmstrip && filmstrip.metadata && filmstrip.metadata.interval > 0) {
             const url = this.createContentUrlWithAuthParams(filmstrip.content.url_template);
             this.filmstripStatus = this.getRepStatus(filmstrip);
-            this.mediaControls.initFilmstrip(url, this.filmstripStatus, this.aspect, filmstrip.metadata.interval);
+
+            if (this.mediaControls) {
+                this.mediaControls.initFilmstrip(url, this.filmstripStatus, this.aspect, filmstrip.metadata.interval);
+            }
         }
     }
 

@@ -1,0 +1,19 @@
+@import '~box-ui-elements/es/styles/variables';
+
+.bp-VideoControls {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-image: linear-gradient(to top, rgba($black, .6) 0%, rgba($black, 0) 100%);
+}
+
+.bp-VideoControls-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px 5px;
+}
+
+.bp-VideoControls-group {
+    display: flex;
+    align-items: center;
+}

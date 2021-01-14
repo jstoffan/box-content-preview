@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import MediaControlsRoot from '../MediaControlsRoot';
+import MP3ControlsRoot from '../MP3ControlsRoot';
 
 describe('MediaControlsRoot', () => {
-    const getInstance = (options = {}): MediaControlsRoot =>
-        new MediaControlsRoot({ containerEl: document.createElement('div'), ...options });
+    const getInstance = (options = {}): MP3ControlsRoot =>
+        new MP3ControlsRoot({ containerEl: document.createElement('div'), ...options });
 
     describe('constructor', () => {
         test('should inject a media controls root element into the container', () => {

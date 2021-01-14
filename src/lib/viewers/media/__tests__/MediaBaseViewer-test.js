@@ -2,7 +2,7 @@
 import BaseViewer from '../../BaseViewer';
 import Browser from '../../../Browser';
 import MediaBaseViewer from '../MediaBaseViewer';
-import MediaControlsRoot from '../MediaControlsRoot';
+import MP3ControlsRoot from '../MP3ControlsRoot';
 import PreviewError from '../../../PreviewError';
 import Timer from '../../../Timer';
 import { CLASS_ELEM_KEYBOARD_FOCUS } from '../../../constants';
@@ -382,7 +382,7 @@ describe('lib/viewers/media/MediaBaseViewer', () => {
         test('should create controls root and render the react controls', () => {
             media.loadUIReact();
 
-            expect(media.controls).toBeInstanceOf(MediaControlsRoot);
+            expect(media.controls).toBeInstanceOf(MP3ControlsRoot);
             expect(media.addEventListenersForMediaElement).toBeCalled();
             expect(media.renderUI).toBeCalled();
         });

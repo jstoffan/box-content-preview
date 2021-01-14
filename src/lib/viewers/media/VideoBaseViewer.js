@@ -1,5 +1,8 @@
 import throttle from 'lodash/throttle';
+import React from 'react';
 import MediaBaseViewer from './MediaBaseViewer';
+import VideoControls from './VideoControls';
+import VideoControlsRoot from './VideoControlsRoot';
 import { CLASS_HIDDEN, CLASS_IS_BUFFERING, CLASS_DARK } from '../../constants';
 import { ICON_PLAY_LARGE } from '../../icons/icons';
 
@@ -88,6 +91,33 @@ class VideoBaseViewer extends MediaBaseViewer {
         super.loadUI();
     }
 
+    loadUIReact() {
+        super.loadUIReact();
+        this.controls = new VideoControlsRoot({ containerEl: this.mediaContainerEl, fileId: this.options.file.id });
+        this.renderUI();
+    }
+
+    renderUI() {
+        if (!this.controls) {
+            return;
+        }
+
+        this.controls.render(
+            <VideoControls
+                bufferedRange={this.mediaEl.buffered}
+                currentTime={this.mediaEl.currentTime}
+                durationTime={this.mediaEl.duration}
+                isPlaying={!this.mediaEl.paused}
+                onFullscreenToggle={this.toggleFullscreen}
+                onMuteChange={this.toggleMute}
+                onPlayPause={this.togglePlay}
+                onTimeChange={this.handleTimeupdateFromMediaControls}
+                onVolumeChange={this.setVolume}
+                volume={this.mediaEl.volume}
+            />,
+        );
+    }
+
     /**
      * Handler for a pointer event on the media element.
      *
@@ -96,10 +126,13 @@ class VideoBaseViewer extends MediaBaseViewer {
      */
     pointerHandler(event) {
         if (event.type === 'touchstart') {
-            // Prevents 'click' event from firing which would pause the video
-            event.preventDefault();
-            event.stopPropagation();
-            this.mediaControls.toggle();
+            if (this.mediaControls) {
+                // Prevents 'click' event from firing which would pause the video
+                event.preventDefault();
+                event.stopPropagation();
+
+                this.mediaControls.toggle();
+            }
         } else if (event.type === 'click') {
             this.togglePlay();
         }
@@ -169,10 +202,21 @@ class VideoBaseViewer extends MediaBaseViewer {
 
         /* istanbul ignore next */
         this.mousemoveHandler = throttle(() => {
-            this.mediaControls.show();
-        }, MOUSE_MOVE_TIMEOUT_IN_MILLIS);
+            if (this.mediaControls) {
+                this.mediaControls.show();
+            } else if (this.wrapperEl) {
+                this.wrapperEl.classList.add('bp-is-hovered');
 
+                window.clearTimeout(this.mouseTimeout);
+                this.mouseTimeout = window.setTimeout(() => {
+                    if (this.wrapperEl) {
+                        this.wrapperEl.classList.remove('bp-is-hovered');
+                    }
+                }, 2000);
+            }
+        }, MOUSE_MOVE_TIMEOUT_IN_MILLIS);
         this.mediaEl.addEventListener('mousemove', this.mousemoveHandler);
+
         if (this.hasTouch) {
             this.mediaEl.addEventListener('touchstart', this.pointerHandler);
         }
