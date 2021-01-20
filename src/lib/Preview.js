@@ -265,11 +265,6 @@ class Preview extends EventEmitter {
         // Destroy the viewer and cleanup preview
         this.destroy();
 
-        // Destroy pefromance observers
-        if (this.perf) {
-            this.perf.destroy();
-        }
-
         // Clean the UI
         this.ui.cleanup();
 
@@ -1609,12 +1604,19 @@ class Preview extends EventEmitter {
      * @return {void}
      */
     emitPerfMetrics() {
-        const { fcp, lcp } = this.perf.report();
+        const { fcp, fid, lcp } = this.perf.report();
 
         if (fcp) {
             this.emitLogEvent(PREVIEW_METRIC, {
                 event_name: 'preview_perf_fcp',
                 value: fcp,
+            });
+        }
+
+        if (fid) {
+            this.emitLogEvent(PREVIEW_METRIC, {
+                event_name: 'preview_perf_fid',
+                value: fid,
             });
         }
 

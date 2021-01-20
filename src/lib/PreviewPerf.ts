@@ -1,18 +1,20 @@
-interface PerformancePaintTiming {
-    loadTime?: DOMHighResTimeStamp;
-    renderTime?: DOMHighResTimeStamp;
-}
+import { getFCP, getFID, getLCP, Metric } from 'web-vitals';
 
-interface PerformanceReport {
+type PerformanceReport = {
     fcp?: number;
+    fid?: number;
     lcp?: number;
+};
+
+// export function isRegion(annotation: Annotation): annotation is AnnotationRegion {
+//     return annotation?.target?.type === 'region';
+// }
+
+export function isSupported(name: string): name is keyof PerformanceReport {
+    return name === 'FCP' || name === 'FID' || name === 'LCP';
 }
 
 export default class PreviewPerf {
-    private fcpObserver: PerformanceObserver;
-
-    private lcpObserver: PerformanceObserver;
-
     private performanceReport: PerformanceReport = {};
 
     /**
@@ -24,29 +26,18 @@ export default class PreviewPerf {
      *  - LCP - Largest Contentful Paint (usually full content preview)
      */
     constructor() {
-        // Bind handlers to the current instance
-        this.handleFcp = this.handleFcp.bind(this);
-        this.handleLcp = this.handleLcp.bind(this);
+        getFCP(this.handleMetric);
+        getFID(this.handleMetric);
+        getLCP(this.handleMetric);
+    }
 
-        // Intialize the performance observers
-        this.fcpObserver = new window.PerformanceObserver(this.handleFcp);
-        this.lcpObserver = new window.PerformanceObserver(this.handleLcp);
-
-        try {
-            this.fcpObserver.observe({ entryTypes: ['paint'] });
-            this.lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
-        } catch (e) {
-            // We're unable to collect these metrics from legacy browsers, such as IE11/Edge (non-Chromium)
+    protected handleMetric = ({ name, value }: Metric): void => {
+        if (isSupported(name)) {
+            this.performanceReport[name] = Math.round(value || 0);
         }
-    }
 
-    /**
-     * Disconnect active observers to avoid memory leaks
-     */
-    public destroy(): void {
-        this.fcpObserver.disconnect();
-        this.lcpObserver.disconnect();
-    }
+        console.log(name, value);
+    };
 
     /**
      * Returns defined metrics if the following conditions are satisfied:
@@ -55,19 +46,5 @@ export default class PreviewPerf {
      */
     public report(): PerformanceReport {
         return this.performanceReport;
-    }
-
-    protected handleFcp(list: PerformanceObserverEntryList): void {
-        const fcpEntries = list.getEntriesByName('first-contentful-paint') || [];
-        const fcpEntry = fcpEntries[0] || {};
-
-        this.performanceReport.fcp = Math.round(fcpEntry.startTime || 0);
-    }
-
-    protected handleLcp(list: PerformanceObserverEntryList): void {
-        const lcpEntries = (list.getEntriesByType('largest-contentful-paint') as PerformancePaintTiming[]) || [];
-        const lcpEntry = lcpEntries[lcpEntries.length - 1] || {};
-
-        this.performanceReport.lcp = Math.round(lcpEntry.renderTime || lcpEntry.loadTime || 0);
     }
 }
