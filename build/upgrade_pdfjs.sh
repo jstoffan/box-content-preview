@@ -49,14 +49,15 @@ sed -e 's@var DEFAULT_CACHE_SIZE = 10;@var DEFAULT_CACHE_SIZE = /iphone|ipad|ipo
 echo "-----------------------------------------------------------------------------------"
 echo "Enabling e-signature rendering without validation..."
 echo "-----------------------------------------------------------------------------------"
-sed -e 's@;r.setFlags(o.AnnotationFlag.HIDDEN)@@' -i '' ${DOC_STATIC_ASSETS_PATH}/pdf.worker.min.js
+sed -e 's@_this4.setFlags(_util.AnnotationFlag.HIDDEN);@@' -i '' ${DOC_STATIC_ASSETS_PATH}/pdf.worker.js
 
 # Minify using Google Closure Compiler, options:
 # Output to ES5 (Box supports Chrome, Edge, IE11, Firefox, Safari, and newer versions of iOS, Android)
-# Do not minify pdf.js or pdf.worker.js, as the closure compiler will mangle function names and cause bugs
 echo "-----------------------------------------------------------------------------------"
 echo "Minifying pdf.js files with Google Closure... Warnings are okay!"
 echo "-----------------------------------------------------------------------------------"
+java -jar ${DOC_COMPILER_BINARY} --rewrite_polyfills false --language_out ECMASCRIPT5 --js ${DOC_STATIC_ASSETS_PATH}/pdf.js --js_output_file ${DOC_STATIC_ASSETS_PATH}/pdf.min.js
+java -jar ${DOC_COMPILER_BINARY} --rewrite_polyfills false --language_out ECMASCRIPT5 --js ${DOC_STATIC_ASSETS_PATH}/pdf.worker.js --js_output_file ${DOC_STATIC_ASSETS_PATH}/pdf.worker.min.js
 java -jar ${DOC_COMPILER_BINARY} --rewrite_polyfills false --language_out ECMASCRIPT5 --js ${DOC_STATIC_ASSETS_PATH}/pdf_viewer.js --js_output_file ${DOC_STATIC_ASSETS_PATH}/pdf_viewer.min.js
 
 echo "-----------------------------------------------------------------------------------"
