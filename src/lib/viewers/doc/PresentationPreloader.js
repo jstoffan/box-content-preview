@@ -39,7 +39,7 @@ class PresentationPreloader extends DocPreloader {
         setDimensions(this.overlayEl, scaledWidth, scaledHeight);
 
         // Hide the preview-level loading indicator
-        this.previewUI.hideLoadingIndicator();
+        // this.previewUI.hideLoadingIndicator();
 
         // Show preload element after content is properly sized
         this.preloadEl.classList.remove(CLASS_INVISIBLE);

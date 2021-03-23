@@ -65,8 +65,7 @@
 // When lights are lowered, change color of loading text
 .bp-dark {
     .bp-error,
-    .bp-loading-text,
-    .bp-btn-loading-download {
+    .bp-loading-text {
         color: $white;
     }
 
@@ -85,17 +84,8 @@
             animation-name: none;
 
             .bp-icon,
-            .bp-loading-text,
-            .bp-loading-btn-container {
+            .bp-loading-text {
                 display: none;
-            }
-
-            .bp-crawler-wrapper {
-                position: static;
-
-                .bp-crawler div {
-                    background-color: $box-blue;
-                }
             }
         }
     }

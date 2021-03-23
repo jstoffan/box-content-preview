@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import EventEmitter from 'events';
 import * as constants from '../../constants';
-import * as icons from '../../icons/icons';
+import * as icons from '../../icons';
 import * as util from '../../util';
 import Api from '../../api';
 import BaseViewer from '../BaseViewer';

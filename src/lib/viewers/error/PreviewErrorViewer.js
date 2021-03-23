@@ -1,7 +1,9 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import FileIcon from 'box-ui-elements/es/icons/file-icon';
 import BaseViewer from '../BaseViewer';
 import PreviewError from '../../PreviewError';
 import { canDownload } from '../../file';
-import { getIconFromExtension, getIconFromName } from '../../icons/icons';
 import { ERROR_CODE, VIEWER_EVENT } from '../../events';
 import { stripAuthFromString } from '../../util';
 import './PreviewError.scss';
@@ -76,23 +78,10 @@ class PreviewErrorViewer extends BaseViewer {
 
         const { displayMessage, details, message } = error;
         const { file } = this.options;
+        const { extension = '' } = file || {};
 
-        this.icon = getIconFromName('FILE_DEFAULT');
-
-        // Generic errors will not have the file object
-        if (file) {
-            switch (file.extension) {
-                case 'zip':
-                case 'tgz':
-                case 'flv':
-                    this.icon = getIconFromExtension(file.extension);
-                    break;
-                default:
-                // no-op
-            }
-        }
-
-        this.iconEl.innerHTML = this.icon;
+        // Display the file-specific error icon
+        ReactDOM.render(<FileIcon extension={extension} />, this.iconEl);
 
         // Display user-friendly error message
         this.messageEl.textContent = displayMessage;

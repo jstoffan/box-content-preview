@@ -143,7 +143,7 @@ class DocPreloader extends EventEmitter {
         }
 
         // Hide the preview-level loading indicator
-        this.previewUI.hideLoadingIndicator();
+        // this.previewUI.hideLoadingIndicator();
 
         // Show preload element after content is properly sized
         this.preloadEl.classList.remove(CLASS_INVISIBLE);
@@ -165,6 +165,7 @@ class DocPreloader extends EventEmitter {
         this.unbindDOMListeners();
         this.restoreScrollPosition();
         this.wrapperEl.classList.add(CLASS_IS_TRANSPARENT);
+        // this.previewUI.hideLoadingIndicator();
 
         // Cleanup preload DOM after fade out
         this.wrapperEl.addEventListener('transitionend', this.cleanupPreload);

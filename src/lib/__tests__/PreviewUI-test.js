@@ -203,44 +203,22 @@ describe('lib/PreviewUI', () => {
             });
         });
 
-        describe('showLoadingDownloadButton()', () => {
-            test('should set up and show loading download button', () => {
-                const buttonEl = containerEl.querySelector(constants.SELECTOR_BOX_PREVIEW_BTN_LOADING_DOWNLOAD);
-                buttonEl.classList.add(constants.CLASS_INVISIBLE);
-                sandbox
-                    .mock(buttonEl)
-                    .expects('addEventListener')
-                    .withArgs('click', handler);
-
-                ui.showLoadingDownloadButton(handler);
-
-                expect(buttonEl.title).toBe('Download');
-                expect(buttonEl.classList.contains(constants.CLASS_INVISIBLE)).toBe(false);
-            });
-        });
-
-        describe('showLoadingIndicator()', () => {
-            test('should show loading indicator', () => {
+        describe('showLoaded()', () => {
+            test('should update the container classes', () => {
                 const contentContainerEl = containerEl.querySelector(constants.SELECTOR_BOX_PREVIEW);
                 contentContainerEl.classList.add(constants.CLASS_PREVIEW_LOADED);
 
-                ui.showLoadingIndicator();
+                ui.showLoaded();
 
                 expect(contentContainerEl).not.toHaveClass(constants.CLASS_PREVIEW_LOADED);
             });
         });
 
-        describe('hideLoadingIndicator()', () => {
-            test('should hide loading indicator', () => {
+        describe('hideLoaded()', () => {
+            test('should update the container classes', () => {
                 const contentContainerEl = containerEl.querySelector(constants.SELECTOR_BOX_PREVIEW);
-                ui.hideLoadingIndicator();
+                ui.hideLoaded();
                 expect(contentContainerEl).toHaveClass(constants.CLASS_PREVIEW_LOADED);
-            });
-
-            test('should remove the hidden class from the crawler', () => {
-                const crawlerEl = containerEl.querySelector(constants.SELECTOR_BOX_PREVIEW_CRAWLER_WRAPPER);
-                ui.hideLoadingIndicator();
-                expect(crawlerEl).not.toHaveClass(constants.CLASS_HIDDEN);
             });
         });
 

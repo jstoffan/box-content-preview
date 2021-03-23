@@ -871,7 +871,11 @@ class Preview extends EventEmitter {
         this.ui.showNavigation(this.file.id, this.collection);
 
         // Setup loading UI and progress bar
-        this.ui.showLoadingIndicator();
+        if (this.options.showLoading) {
+            this.ui.showLoadingIcon(this.file.extension);
+        }
+
+        this.ui.showLoaded();
         this.ui.startProgressBar();
 
         // Start the preview duration timer when the user starts to perceive preview's load
@@ -924,6 +928,9 @@ class Preview extends EventEmitter {
 
         // Whether annotations v2 should be shown
         this.options.showAnnotations = !!options.showAnnotations;
+
+        // Whether the loading icon is displayed while the file loads
+        this.options.showLoading = options.showLoading !== false;
 
         // Whether annotations v4 buttons should be shown in toolbar
         this.options.showAnnotationsControls = !!options.showAnnotationsControls;
@@ -1164,11 +1171,6 @@ class Preview extends EventEmitter {
             throw new PreviewError(ERROR_CODE.PERMISSIONS_PREVIEW, __('error_permissions'));
         }
 
-        // Show loading download button if user can download
-        if (canDownload(this.file, this.options)) {
-            this.ui.showLoadingDownloadButton(this.download);
-        }
-
         // Determine the asset loader to use
         const loader = this.getLoader(this.file);
 
@@ -1198,6 +1200,11 @@ class Preview extends EventEmitter {
 
         // Log the type of file
         this.logger.setType(viewer.NAME);
+
+        // Show the file-specific loading icon
+        if (this.options.showLoading) {
+            this.ui.showLoadingIcon(this.file.extension);
+        }
 
         // Determine the representation to use
         const representation = loader.determineRepresentation(this.file, viewer);
@@ -1382,7 +1389,7 @@ class Preview extends EventEmitter {
         }
 
         // Hide the loading indicator
-        this.ui.hideLoadingIndicator();
+        this.ui.hideLoaded();
 
         // Prefetch next few files
         this.prefetchNextFiles();

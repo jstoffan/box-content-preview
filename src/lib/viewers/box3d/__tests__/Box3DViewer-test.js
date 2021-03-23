@@ -48,7 +48,7 @@ describe('lib/viewers/box3d/Box3DViewer', () => {
                 },
             },
             ui: {
-                showLoadingIndicator: () => {},
+                showLoaded: () => {},
             },
         });
 

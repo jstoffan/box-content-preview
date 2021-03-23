@@ -4,7 +4,7 @@ import BaseViewer from '../../BaseViewer';
 import Browser from '../../../Browser';
 import PreviewError from '../../../PreviewError';
 import * as file from '../../../file';
-import * as icons from '../../../icons/icons';
+import * as icons from '../../../icons';
 import { VIEWER_EVENT } from '../../../events';
 
 let error;

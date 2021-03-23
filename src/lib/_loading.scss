@@ -38,13 +38,11 @@ $spinner-size: 15px;
     right: 0;
     bottom: 0;
     left: 0;
+    z-index: 99999;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    transition: .25s opacity, .25s transform;
-    animation-name: fadeIn;
-    animation-duration: 1s;
-    animation-iteration-count: 1;
+    transition: .25s opacity;
 
     .bp-loaded & {
         display: none;
@@ -66,33 +64,9 @@ $spinner-size: 15px;
     text-align: center;
 }
 
-.bp-loading-btn-container {
-    padding: 15px 0 27px; // Same height as error viewer
-    text-align: center;
-}
-
-.bp-btn-loading-download {
-    color: $better-black;
-    font-size: 12px;
-}
-
-// This crawler wrapper is used during preview loading
-.bp-crawler-wrapper {
-    position: absolute;
-    top: 72px;
-    width: 100%;
-
-    .bp-crawler {
-        transform: scale(1.5);
-
-        div {
-            background-color: $downtown-grey;
-        }
-    }
-}
-
 // Crawler is 3 short lines pulsing
 .bp-crawler {
+    display: none;
     text-align: center;
 
     div {
@@ -120,22 +94,6 @@ $spinner-size: 15px;
 .bp .bp-doc.bp-doc-presentation {
     // Overrides PDF.js loading spinner
     .pdfViewer .page .loadingIcon {
-        @include spinner;
-    }
-}
-
-.bp-document-preload-wrapper,
-.bp-presentation-preload-wrapper {
-    .bp-preload-spinner {
-        @include spinner;
-
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        width: $spinner-size;
-        height: $spinner-size;
-        margin: auto;
+        display: none;
     }
 }

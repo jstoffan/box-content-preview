@@ -249,7 +249,7 @@ class Box3DViewer extends BaseViewer {
         this.detachEventHandlers();
         this.contextNotification.show('WebGL Context Restored');
         this.emit(VIEWER_EVENT.progressStart);
-        this.previewUI.showLoadingIndicator();
+        this.previewUI.showLoaded();
         this.postLoad();
     }
 

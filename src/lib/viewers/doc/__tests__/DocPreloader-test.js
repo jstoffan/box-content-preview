@@ -68,7 +68,7 @@ describe('lib/viewers/doc/DocPreloader', () => {
             stubs.checkDocumentLoaded = jest.spyOn(docPreloader, 'checkDocumentLoaded').mockImplementation();
             stubs.emit = jest.spyOn(docPreloader, 'emit').mockImplementation();
             stubs.setDimensions = jest.spyOn(util, 'setDimensions').mockImplementation();
-            stubs.hideLoadingIndicator = docPreloader.previewUI.hideLoadingIndicator;
+            stubs.hideLoadingIndicator = docPreloader.previewUI.hideLoaded;
             docPreloader.imageEl = {};
             docPreloader.preloadEl = document.createElement('div');
         });
