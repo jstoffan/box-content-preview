@@ -1,7 +1,7 @@
 import React from 'react';
 import TargetedClickThroughGuideTooltip from 'box-ui-elements/es/features/targeting/TargetedClickThroughGuideTooltip';
-import ControlsContext from '../controls-context';
-
+import { ControlsLayerContext } from '../controls-layer';
+import { ExperiencesContext } from '../experiences';
 import { TargetingApi } from '../../../types';
 
 export type Props = Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> & {
@@ -10,7 +10,8 @@ export type Props = Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick
 };
 
 export default function AnnotationsTargetedTooltip({ children, isEnabled = false }: Props): JSX.Element | null {
-    const { experiences } = React.useContext(ControlsContext);
+    const { experiences } = React.useContext(ExperiencesContext);
+    const { setIsForced } = React.useContext(ControlsLayerContext);
 
     const shouldTarget = !!(
         isEnabled &&
@@ -27,6 +28,8 @@ export default function AnnotationsTargetedTooltip({ children, isEnabled = false
         <TargetedClickThroughGuideTooltip
             body={__('annotations_tooltip_body')}
             className="bp-AnnotationsTooltip"
+            onClose={(): void => setIsForced(false)}
+            onShow={(): void => setIsForced(true)}
             shouldTarget
             showCloseButton
             title={__('annotations_tooltip_title')}

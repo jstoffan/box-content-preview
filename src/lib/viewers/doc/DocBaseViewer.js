@@ -1058,12 +1058,7 @@ class DocBaseViewer extends BaseViewer {
      * @return {void}
      */
     updateExperiences(experiences) {
-        if (!this.controls) {
-            return;
-        }
-
-        this.controls.updateExperiences(experiences);
-
+        this.experiences = experiences;
         this.renderUI();
     }
 
@@ -1086,6 +1081,7 @@ class DocBaseViewer extends BaseViewer {
             <DocControls
                 annotationColor={this.annotationModule.getColor()}
                 annotationMode={this.annotationControlsFSM.getMode()}
+                experiences={this.experiences}
                 hasDrawing={canAnnotate && showAnnotationsDrawingCreate}
                 hasHighlight={canAnnotate && canDownload}
                 hasRegion={canAnnotate}

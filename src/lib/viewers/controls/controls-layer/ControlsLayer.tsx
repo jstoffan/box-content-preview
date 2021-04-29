@@ -1,5 +1,6 @@
 import React from 'react';
 import noop from 'lodash/noop';
+import ControlsLayerContext from './ControlsLayerContext';
 import './ControlsLayer.scss';
 
 export type Helpers = {
@@ -18,6 +19,7 @@ export const SHOW_CLASSNAME = 'bp-is-visible';
 
 export default function ControlsLayer({ children, onMount = noop }: Props): JSX.Element {
     const [isShown, setIsShown] = React.useState(false);
+    const [isForced, setIsForced] = React.useState(false);
     const hasFocusRef = React.useRef(false);
     const hasCursorRef = React.useRef(false);
     const hideTimeoutRef = React.useRef<number>();
@@ -78,14 +80,16 @@ export default function ControlsLayer({ children, onMount = noop }: Props): JSX.
     React.useEffect(() => helpersRef.current.clean, []);
 
     return (
-        <div
-            className={`bp-ControlsLayer ${isShown ? SHOW_CLASSNAME : ''}`}
-            onBlur={handleFocusOut}
-            onFocus={handleFocusIn}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-        >
-            {children}
-        </div>
+        <ControlsLayerContext.Provider value={{ setIsForced }}>
+            <div
+                className={`bp-ControlsLayer ${isForced || isShown ? SHOW_CLASSNAME : ''}`}
+                onBlur={handleFocusOut}
+                onFocus={handleFocusIn}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+            >
+                {children}
+            </div>
+        </ControlsLayerContext.Provider>
     );
 }
