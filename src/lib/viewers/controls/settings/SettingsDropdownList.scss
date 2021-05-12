@@ -1,8 +1,5 @@
 @import './styles';
 
-.bp-SettingsFlyout {
+.bp-SettingsDropdownList {
     @include bp-SettingsFlyout;
-
-    top: -5px;
-    right: 0;
 }

@@ -143,9 +143,9 @@ describe('lib/viewers/box3d/model3d/Model3DControls', () => {
 
                     events.forEach(e => {
                         test(`should add an event listener for ${e.event} events`, () => {
-                            const settingsListenStub = jest.spyOn(controls.settingsPullup, 'addListener');
+                            const SettingsDropdownListenStub = jest.spyOn(controls.settingsPullup, 'addListener');
                             controls.addUi();
-                            expect(settingsListenStub).toBeCalledWith(e.event, controls[e.callback]);
+                            expect(SettingsDropdownListenStub).toBeCalledWith(e.event, controls[e.callback]);
                         });
                     });
                 });

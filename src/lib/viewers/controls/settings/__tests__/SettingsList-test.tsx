@@ -1,19 +1,19 @@
 import React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import { act } from 'react-dom/test-utils';
-import SettingsList from '../SettingsList';
+import SettingsDropdownList from '../SettingsDropdownList';
 
-describe('SettingsList', () => {
+describe('SettingsDropdownList', () => {
     const getHostNode = (): HTMLDivElement => {
         return document.body.appendChild(document.createElement('div'));
     };
     const getWrapper = (props = {}): ReactWrapper =>
         mount(
-            <SettingsList {...props}>
+            <SettingsDropdownList {...props}>
                 <div aria-selected="true" data-testid="test1" role="option" tabIndex={0} />
                 <div aria-selected="false" data-testid="test2" role="option" tabIndex={0} />
                 <div aria-selected="false" data-testid="test3" role="option" tabIndex={0} />
-            </SettingsList>,
+            </SettingsDropdownList>,
             {
                 attachTo: getHostNode(),
             },
@@ -30,7 +30,7 @@ describe('SettingsList', () => {
 
             // index 1 has focus
             act(() => {
-                wrapper.find('.bp-SettingsList').simulate('keydown', { key: 'ArrowDown' });
+                wrapper.find('.bp-SettingsDropdownList').simulate('keydown', { key: 'ArrowDown' });
             });
             wrapper.update();
 
@@ -40,7 +40,7 @@ describe('SettingsList', () => {
 
             // index 2 has focus
             act(() => {
-                wrapper.find('.bp-SettingsList').simulate('keydown', { key: 'ArrowDown' });
+                wrapper.find('.bp-SettingsDropdownList').simulate('keydown', { key: 'ArrowDown' });
             });
             wrapper.update();
 
@@ -50,7 +50,7 @@ describe('SettingsList', () => {
 
             // index 2 should keep focus because we are at the end of the list
             act(() => {
-                wrapper.find('.bp-SettingsList').simulate('keydown', { key: 'ArrowDown' });
+                wrapper.find('.bp-SettingsDropdownList').simulate('keydown', { key: 'ArrowDown' });
             });
             wrapper.update();
 
@@ -60,7 +60,7 @@ describe('SettingsList', () => {
 
             // index 1 has focus
             act(() => {
-                wrapper.find('.bp-SettingsList').simulate('keydown', { key: 'ArrowUp' });
+                wrapper.find('.bp-SettingsDropdownList').simulate('keydown', { key: 'ArrowUp' });
             });
             wrapper.update();
 
@@ -70,7 +70,7 @@ describe('SettingsList', () => {
 
             // index 0 has focus
             act(() => {
-                wrapper.find('.bp-SettingsList').simulate('keydown', { key: 'ArrowUp' });
+                wrapper.find('.bp-SettingsDropdownList').simulate('keydown', { key: 'ArrowUp' });
             });
             wrapper.update();
 
@@ -80,7 +80,7 @@ describe('SettingsList', () => {
 
             // index 0 should keep focus because we are at the top of the list
             act(() => {
-                wrapper.find('.bp-SettingsList').simulate('keydown', { key: 'ArrowUp' });
+                wrapper.find('.bp-SettingsDropdownList').simulate('keydown', { key: 'ArrowUp' });
             });
             wrapper.update();
 
@@ -96,7 +96,7 @@ describe('SettingsList', () => {
             const wrapper = getWrapper({ onKeyDown });
             const element = wrapper.getDOMNode();
 
-            expect(element).toHaveClass('bp-SettingsList');
+            expect(element).toHaveClass('bp-SettingsDropdownList');
             expect(element).toHaveAttribute('role', 'listbox');
             expect(element).toHaveAttribute('tabIndex', '0');
         });

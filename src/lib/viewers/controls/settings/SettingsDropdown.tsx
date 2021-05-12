@@ -2,9 +2,9 @@ import React from 'react';
 import classNames from 'classnames';
 import uniqueId from 'lodash/uniqueId';
 import SettingsFlyout from './SettingsFlyout';
-import SettingsList from './SettingsList';
-import useClickOutside from '../hooks/useClickOutside';
+import SettingsDropdownList from './SettingsDropdownList';
 import { decodeKeydown } from '../../../util';
+import { useClickOutside } from '../hooks';
 import './SettingsDropdown.scss';
 
 export type ListItem = {
@@ -24,8 +24,13 @@ export default function SettingsDropdown({ className, label, listItems, onSelect
     const { current: id } = React.useRef(uniqueId('bp-SettingsDropdown_'));
     const buttonElRef = React.useRef<HTMLButtonElement | null>(null);
     const dropdownElRef = React.useRef<HTMLDivElement | null>(null);
-    const listElRef = React.useRef<HTMLDivElement | null>(null);
     const [isOpen, setIsOpen] = React.useState(false);
+
+    const handleClick = (event: React.MouseEvent): void => {
+        // Prevent the event from bubbling up and triggering any upstream click handling logic,
+        // i.e. if the dropdown is nested inside a menu flyout
+        event.stopPropagation();
+    };
 
     const handleKeyDown = (event: React.KeyboardEvent): void => {
         const key = decodeKeydown(event);
@@ -42,26 +47,6 @@ export default function SettingsDropdown({ className, label, listItems, onSelect
             // Prevent the event from bubbling up and triggering any upstream keydown handling logic
             event.stopPropagation();
         }
-    };
-    const handleSelect = (selectedOption: string): void => {
-        setIsOpen(false);
-        onSelect(selectedOption);
-    };
-    const createClickHandler = (selectedOption: string) => (event: React.MouseEvent<HTMLDivElement>): void => {
-        handleSelect(selectedOption);
-
-        // Prevent the event from bubbling up and triggering any upstream click handling logic,
-        // i.e. if the dropdown is nested inside a menu flyout
-        event.stopPropagation();
-    };
-    const createKeyDownHandler = (selectedOption: string) => (event: React.KeyboardEvent<HTMLDivElement>): void => {
-        const key = decodeKeydown(event);
-
-        if (key !== 'Space' && key !== 'Enter') {
-            return;
-        }
-
-        handleSelect(selectedOption);
     };
 
     useClickOutside(dropdownElRef, () => setIsOpen(false));
@@ -83,33 +68,40 @@ export default function SettingsDropdown({ className, label, listItems, onSelect
             >
                 {value}
             </button>
-            <SettingsFlyout className="bp-SettingsDropdown-flyout" isOpen={isOpen}>
-                <SettingsList
-                    ref={listElRef}
-                    aria-labelledby={`${id}-label`}
-                    className="bp-SettingsDropdown-list"
-                    onKeyDown={handleKeyDown}
-                    role="listbox"
-                    tabIndex={-1}
-                >
-                    {listItems.map(({ label: itemLabel, value: itemValue }) => {
-                        return (
-                            <div
-                                key={itemValue}
-                                aria-selected={value === itemValue}
-                                className="bp-SettingsDropdown-listitem"
-                                id={itemValue}
-                                onClick={createClickHandler(itemValue)}
-                                onKeyDown={createKeyDownHandler(itemValue)}
-                                role="option"
-                                tabIndex={0}
-                            >
-                                {itemLabel}
-                            </div>
-                        );
-                    })}
-                </SettingsList>
-            </SettingsFlyout>
+            <SettingsDropdownList
+                aria-labelledby={`${id}-label`}
+                className="bp-SettingsDropdown-list"
+                isOpen={isOpen}
+                onClick={handleClick}
+                onKeyDown={handleKeyDown}
+                role="listbox"
+                tabIndex={-1}
+            >
+                {listItems.map(({ label: itemLabel, value: itemValue }) => (
+                    <div
+                        key={itemValue}
+                        aria-selected={value === itemValue}
+                        className="bp-SettingsDropdown-listitem"
+                        id={itemValue}
+                        onClick={(): void => {
+                            setIsOpen(false);
+                            onSelect(itemValue);
+                        }}
+                        onKeyDown={(event: React.KeyboardEvent<HTMLDivElement>): void => {
+                            const key = decodeKeydown(event);
+
+                            if (key === 'Space' || key === 'Enter') {
+                                setIsOpen(false);
+                                onSelect(itemValue);
+                            }
+                        }}
+                        role="option"
+                        tabIndex={0}
+                    >
+                        {itemLabel}
+                    </div>
+                ))}
+            </SettingsDropdownList>
         </div>
     );
 }

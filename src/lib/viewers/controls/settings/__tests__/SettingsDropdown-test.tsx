@@ -3,7 +3,7 @@ import { act } from 'react-dom/test-utils';
 import { mount, ReactWrapper } from 'enzyme';
 import SettingsDropdown, { Props } from '../SettingsDropdown';
 import SettingsFlyout from '../SettingsFlyout';
-import SettingsList from '../SettingsList';
+import SettingsDropdownList from '../SettingsDropdownList';
 
 describe('SettingsDropdown', () => {
     const listItems = [
@@ -159,7 +159,7 @@ describe('SettingsDropdown', () => {
             wrapper.update();
 
             act(() => {
-                wrapper.find(SettingsList).simulate('keydown', mockEvent);
+                wrapper.find(SettingsDropdownList).simulate('keydown', mockEvent);
             });
             wrapper.update();
 
@@ -178,7 +178,7 @@ describe('SettingsDropdown', () => {
             wrapper.update();
 
             act(() => {
-                wrapper.find(SettingsList).simulate('keydown', mockEvent);
+                wrapper.find(SettingsDropdownList).simulate('keydown', mockEvent);
             });
             wrapper.update();
 
@@ -195,7 +195,7 @@ describe('SettingsDropdown', () => {
             expect(wrapper.find('.bp-SettingsDropdown-label').text()).toBe('Dropdown Label');
             expect(wrapper.find('.bp-SettingsDropdown-button').text()).toBe('first');
             expect(wrapper.exists(SettingsFlyout));
-            expect(wrapper.exists(SettingsList));
+            expect(wrapper.exists(SettingsDropdownList));
         });
     });
 });

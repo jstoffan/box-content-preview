@@ -9,8 +9,8 @@ import SettingsMenu from './SettingsMenu';
 import SettingsMenuBack from './SettingsMenuBack';
 import SettingsMenuItem from './SettingsMenuItem';
 import SettingsRadioItem from './SettingsRadioItem';
-import useClickOutside from '../hooks/useClickOutside';
 import { decodeKeydown } from '../../../util';
+import { useClickOutside } from '../hooks';
 
 export type Props = React.PropsWithChildren<{
     className?: string;
