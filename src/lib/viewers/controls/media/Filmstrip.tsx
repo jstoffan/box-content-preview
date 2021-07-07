@@ -15,7 +15,7 @@ export type Props = {
     time: number;
 };
 
-function Filmstrip({
+export default function Filmstrip({
     aspectRatio = 1,
     interval = 1,
     imageUrl = '',
@@ -70,5 +70,3 @@ function Filmstrip({
         </div>
     );
 }
-
-export default React.forwardRef(Filmstrip);

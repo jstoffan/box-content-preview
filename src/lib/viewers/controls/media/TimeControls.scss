@@ -1,4 +1,4 @@
-@import '../slider/styles';
+@import '../styles';
 
 .bp-TimeControls {
     position: relative;
@@ -9,12 +9,10 @@
 .bp-TimeControls-slider {
     height: 18px; // Divisible by 3px (default) and 6px (hovered) for better vertical centering
 
-    .bp-SliderControl-input {
-        @include bp-SliderThumb {
-            transform: scale(0);
-            transition: transform 100ms ease;
-            will-change: transform; // Prevent flickering in Safari
-        }
+    .bp-SliderControl-thumb {
+        transform: scale(0);
+        transition: transform 100ms ease;
+        will-change: transform; // Prevent flickering in Safari
     }
 
     .bp-SliderControl-track {
@@ -23,11 +21,11 @@
         will-change: transform; // Prevent flickering in Safari
     }
 
+    &.bp-is-scrubbing,
+    &:focus,
     &:hover {
-        .bp-SliderControl-input {
-            @include bp-SliderThumb {
-                transform: scale(1);
-            }
+        .bp-SliderControl-thumb {
+            transform: scale(1);
         }
 
         .bp-SliderControl-track {

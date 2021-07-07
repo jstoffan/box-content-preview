@@ -46,7 +46,6 @@ export default class ControlsRoot {
 
     handleMount = (helpers: Helpers): void => {
         this.controlsLayer = helpers;
-        this.controlsLayer.show();
     };
 
     handleMouseMove = throttle((): void => {

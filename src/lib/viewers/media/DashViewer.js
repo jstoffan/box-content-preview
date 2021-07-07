@@ -805,7 +805,10 @@ class DashViewer extends VideoBaseViewer {
 
         // Make media element visible after resize
         this.showMedia();
-        if (!this.getViewerOption('useReactControls')) {
+        if (this.getViewerOption('useReactControls')) {
+            this.controls.controlsLayer.show();
+            this.controls.controlsLayer.hide(); // Show controls briefly after content loads
+        } else {
             this.mediaControls.show();
         }
 

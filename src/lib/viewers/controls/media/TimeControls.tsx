@@ -2,9 +2,9 @@ import React from 'react';
 import isFinite from 'lodash/isFinite';
 import noop from 'lodash/noop';
 import { bdlBoxBlue, bdlGray62, white } from 'box-ui-elements/es/styles/variables';
-import SliderControl, { Ref as SliderControlRef } from '../slider';
-import './TimeControls.scss';
 import Filmstrip from './Filmstrip';
+import SliderControl from '../slider';
+import './TimeControls.scss';
 
 export type Props = {
     aspectRatio?: number;
@@ -25,7 +25,7 @@ export const percent = (value1: number, value2: number): number => {
 };
 
 export default function TimeControls({
-    aspectRatio = 1,
+    aspectRatio,
     bufferedRange,
     currentTime = 0,
     durationTime = 0,
@@ -41,19 +41,10 @@ export default function TimeControls({
     const bufferedPercentage = percent(bufferedAmount, durationTime);
     const currentPercentage = isFinite(currentTime) && isFinite(durationTime) ? percent(currentTime, durationTime) : 0;
 
-    const handleChange = (newValue: number): void => {
-        onTimeChange(newValue);
-    };
-
-    const handleMouseMove = ({ currentTarget, pageX }: React.MouseEvent<SliderControlRef>): void => {
-        const { left: timeLeft, width: timeWidth } = currentTarget.getBoundingClientRect();
-        const eventPosition = Math.min(Math.max(0, pageX - timeLeft + 3), timeWidth);
-        const eventPositionRatio = Math.min(Math.max(0, eventPosition / timeWidth), 1);
-        const eventTime = Math.floor(eventPositionRatio * durationTime);
-
-        setHoverPosition(eventPosition);
-        setHoverPositionMax(timeWidth);
-        setHoverTime(eventTime);
+    const handleMouseMove = (newTime: number, newPosition: number, width: number): void => {
+        setHoverPosition(newPosition);
+        setHoverPositionMax(width);
+        setHoverTime(newTime);
     };
 
     return (
@@ -74,12 +65,12 @@ export default function TimeControls({
                 className="bp-TimeControls-slider"
                 max={durationTime}
                 onBlur={noop}
-                onChange={handleChange}
                 onFocus={noop}
-                onMouseMove={filmstripInterval ? handleMouseMove : undefined}
                 onMouseOut={(): void => setIsSliderHovered(false)}
                 onMouseOver={(): void => setIsSliderHovered(true)}
-                step={0.01}
+                onMove={filmstripInterval ? handleMouseMove : undefined}
+                onUpdate={onTimeChange}
+                step={5}
                 title={__('media_time_slider')}
                 track={`linear-gradient(to right, ${bdlBoxBlue} ${currentPercentage}%, ${white} ${currentPercentage}%, ${white} ${bufferedPercentage}%, ${bdlGray62} ${bufferedPercentage}%, ${bdlGray62} 100%)`}
                 value={currentTime}
