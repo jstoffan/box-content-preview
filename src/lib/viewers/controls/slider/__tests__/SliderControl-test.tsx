@@ -4,7 +4,7 @@ import SliderControl from '../SliderControl';
 
 describe('SliderControl', () => {
     const getWrapper = (props = {}): ShallowWrapper =>
-        shallow(<SliderControl onChange={jest.fn()} value={0} {...props} />);
+        shallow(<SliderControl onChange={jest.fn()} title="Slider" value={0} {...props} />);
 
     describe('event handlers', () => {
         test('should parse and return the current value on change', () => {
